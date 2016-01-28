@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Cs3250-data-project by joshuastevenson</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/joshuastevenson/cs3250-data-project">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/joshuastevenson/cs3250-data-project/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/joshuastevenson/cs3250-data-project/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Cs3250-data-project</h1>
+          <p>Analysis of speedrun.com </p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/joshuastevenson">joshuastevenson</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a id="project-proposal" class="anchor" href="#project-proposal" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Project Proposal</h1>
+
+<p><em>Authors: Joshua Stevenson</em> </p>
+
+<p>Speedrun.com is a leaderboard for the shortest completion times of videogames. Submissions to the leaderboard are called “speedruns” or “runs”. People who do speedruns are called “speedrunners”. There can be a leaderboard for almost any videogame. Creation of a leaderboard requires a link to a recording of a speedrun. Some games are not on speedrun.com because communities of runners have runs on other websites. Some leaderboards mirror other sites and may be out of date. Most games have several leaderboards for different categories. Almost every game has an “any%” category where the goal is to beat the game as fast as possible without any restrictions. Speedrunners often run their favorite games. Therefore popular games tend to have more runners. “The Legend of Zelda: Ocarina of Time” has almost 400 runs (mirrored from zeldaspeedruns.com) for the any% category. Most runners stream attempts on twitch.tv and may have their twitch profile linked to their speedrun.com profile. Other accounts that can be listed on the profile are YouTube, Twitter, Hitbox, and SpeedRunsLive. Runners can set their location with a country and region. The site is used globally by many communities. Users also can set their user name display color. Users may be a moderator of a game’s leaderboards to approve submitted runs. Runs on the leaderboard are expected to link to a recording for proof but are not required to. Speedruns normally use carefully planned routes. This involves path optimization of the game’s objectives and reverse engineering of mechanics to discover time saving glitches. Several runs that are about five minutes or less utilize arbitrary code execution exploits in the game. Speedrunning, for most runners, is a hobby and leaderboards are used to show improvement and organize competition in a community. </p>
+
+<p>Speedrun.com has a REST API to query public data. The API is rate limited to 50 requests per minute, but if more requests are needed than allowed, then maintainers of speedrun.com can be contacted to find a solution. There is current communication to receive a bulk data dump directly from speedrun.com that will be either a SQL dump or a CSV file. The about page claims there are “116,281 runs in 5,361 games” in their database. The data is user submitted and is licensed under Creative Commons Attribution-NonCommercial 4.0 International. Games have a list of leaderboards, a list of moderator users, may belong to a series of games, and may have custom styles for display on speedrun.com. Leaderboards list runs their numeric placings. Runs have a time, list of runners, submission date, date of run, verification date, version the game, optionally a short comment, optionally a link to a video, and optionally a link to splits. Runners have username colors, optionally have a global location, and optionally have links to other profiles. More user data could be collected based on those profiles such as their number of followers.</p>
+
+<p>Speedrun.com is used by many intersecting communities to show progress in their games. Some analysis can be done on relations of user location. Some games have sub communities that form the communities of other games. For example there are a few runners of “Ocarina of Time” that also run “Dragon Ball Z: Buu’s Fury”. Node graphs will help examine these things. These communities could possibly be identified. The relation of run ranking and related date may be interesting. Are world records submitted and verified quicker? Is the world record newer or older than most runs? It may be possible to determine what games are seriously ran and which are treated as jokes. Answers to these questions could help people find new games to run. </p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
