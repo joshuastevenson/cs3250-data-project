@@ -59,16 +59,26 @@ var nasdaqTable = dc.dataTable('.dc-data-table');
 //d3.json('data.json', function(data) {...};
 //jQuery.getJson('data.json', function(data){...});
 //```
-d3.csv('ndx.csv', function (data) {
+
+//d3.csv('ndx.csv', function (data) {
+d3.csv('out.csv', function (data) {
     // Since its a csv file we need to format the data a bit.
     var dateFormat = d3.time.format('%m/%d/%Y');
     var numberFormat = d3.format('.2f');
 
     data.forEach(function (d) {
-        d.dd = dateFormat.parse(d.date);
-        d.month = d3.time.month(d.dd); // pre-calculate month for better performance
-        d.close = +d.close; // coerce to number
-        d.open = +d.open;
+        if (d.run_at != "NULL") {
+          d.dd = dateFormat.parse(d.run_at);
+          d.month = d3.time.month(d.dd); // pre-calculate month for better performance
+        }else {
+          //d.run_at = null;
+          d.dd = dateFormat.parse("1/1/2010");
+          d.month = d3.time.month(d.dd);
+        }
+
+        d.place = +d.place; // coerce to number
+        d.primary_time = +d.primary_time;
+        d.year = +d.year;
     });
 
     //### Create Crossfilter Dimensions and Groups
@@ -85,24 +95,24 @@ d3.csv('ndx.csv', function (data) {
     var yearlyPerformanceGroup = yearlyDimension.group().reduce(
         /* callback for when data is added to the current filter results */
         function (p, v) {
-            ++p.count;
-            p.absGain += v.close - v.open;
-            p.fluctuation += Math.abs(v.close - v.open);
-            p.sumIndex += (v.open + v.close) / 2;
-            p.avgIndex = p.sumIndex / p.count;
-            p.percentageGain = p.avgIndex ? (p.absGain / p.avgIndex) * 100 : 0;
-            p.fluctuationPercentage = p.avgIndex ? (p.fluctuation / p.avgIndex) * 100 : 0;
+            //++p.count;
+            //p.absGain += v.close - v.open;
+            //p.fluctuation += Math.abs(v.close - v.open);
+            //p.sumIndex += (v.open + v.close) / 2;
+            //p.avgIndex = p.sumIndex / p.count;
+            //p.percentageGain = p.avgIndex ? (p.absGain / p.avgIndex) * 100 : 0;
+            //p.fluctuationPercentage = p.avgIndex ? (p.fluctuation / p.avgIndex) * 100 : 0;
             return p;
         },
         /* callback for when data is removed from the current filter results */
         function (p, v) {
-            --p.count;
-            p.absGain -= v.close - v.open;
-            p.fluctuation -= Math.abs(v.close - v.open);
-            p.sumIndex -= (v.open + v.close) / 2;
-            p.avgIndex = p.count ? p.sumIndex / p.count : 0;
-            p.percentageGain = p.avgIndex ? (p.absGain / p.avgIndex) * 100 : 0;
-            p.fluctuationPercentage = p.avgIndex ? (p.fluctuation / p.avgIndex) * 100 : 0;
+            //--p.count;
+            //p.absGain -= v.close - v.open;
+            //p.fluctuation -= Math.abs(v.close - v.open);
+            //p.sumIndex -= (v.open + v.close) / 2;
+            //p.avgIndex = p.count ? p.sumIndex / p.count : 0;
+            //p.percentageGain = p.avgIndex ? (p.absGain / p.avgIndex) * 100 : 0;
+            //p.fluctuationPercentage = p.avgIndex ? (p.fluctuation / p.avgIndex) * 100 : 0;
             return p;
         },
         /* initialize p */
@@ -130,23 +140,23 @@ d3.csv('ndx.csv', function (data) {
     });
     // Group by total movement within month
     var monthlyMoveGroup = moveMonths.group().reduceSum(function (d) {
-        return Math.abs(d.close - d.open);
+        return d.run_at;//Math.abs(d.close - d.open);
     });
     // Group by total volume within move, and scale down result
     var volumeByMonthGroup = moveMonths.group().reduceSum(function (d) {
-        return d.volume / 500000;
+        return d.place;//d.volume / 500000;
     });
     var indexAvgByMonthGroup = moveMonths.group().reduce(
         function (p, v) {
-            ++p.days;
-            p.total += (v.open + v.close) / 2;
-            p.avg = Math.round(p.total / p.days);
+            //++p.days;
+            //p.total += (v.open + v.close) / 2;
+            //p.avg = Math.round(p.total / p.days);
             return p;
         },
         function (p, v) {
-            --p.days;
-            p.total -= (v.open + v.close) / 2;
-            p.avg = p.days ? Math.round(p.total / p.days) : 0;
+            //--p.days;
+            //p.total -= (v.open + v.close) / 2;
+            //p.avg = p.days ? Math.round(p.total / p.days) : 0;
             return p;
         },
         function () {
@@ -156,14 +166,14 @@ d3.csv('ndx.csv', function (data) {
 
     // Create categorical dimension
     var gainOrLoss = ndx.dimension(function (d) {
-        return d.open > d.close ? 'Loss' : 'Gain';
+        return d.emulated//d.open > d.close ? 'Loss' : 'Gain';
     });
     // Produce counts records in the dimension
     var gainOrLossGroup = gainOrLoss.group();
 
     // Determine a histogram of percent changes
     var fluctuation = ndx.dimension(function (d) {
-        return Math.round((d.close - d.open) / d.open * 100);
+        return 10;//Math.round((d.close - d.open) / d.open * 100);
     });
     var fluctuationGroup = fluctuation.group();
 
@@ -181,7 +191,7 @@ d3.csv('ndx.csv', function (data) {
         }
     });
     var quarterGroup = quarter.group().reduceSum(function (d) {
-        return d.volume;
+        return 20;//d.volume;
     });
 
     // Counts per weekday
