@@ -268,7 +268,7 @@ d3.csv('out.csv', function (data) {
         })
         .maxBubbleRelativeSize(0.3)
         .x(d3.scale.linear().domain([-2500, 2500]))
-        .y(d3.scale.linear().domain([0, 100]))
+        .y(d3.scale.linear().domain([0, 70]))
         .r(d3.scale.linear().domain([0, 4000]))
         //##### Elastic Scaling
 
@@ -277,7 +277,7 @@ d3.csv('out.csv', function (data) {
         .elasticX(true)
         //`.yAxisPadding` and `.xAxisPadding` add padding to data above and below their max values in the same unit
         //domains as the Accessors.
-        .yAxisPadding(100)
+        .yAxisPadding(70)
         .xAxisPadding(500)
         // (_optional_) render horizontal grid lines, `default=false`
         .renderHorizontalGridLines(true)
@@ -301,8 +301,7 @@ d3.csv('out.csv', function (data) {
             return [
                 p.key,
                 'records: ' + p.value.absGain,
-                'Percentage: ' + numberFormat(p.value.percentageGain) + '%',
-                'Fluctuation / Index Ratio: ' + numberFormat(p.value.fluctuationPercentage) + '%'
+                'Percentage: ' + numberFormat(p.value.percentageGain) + '%'
             ].join('\n');
         })
         //#### Customize Axes
@@ -311,7 +310,8 @@ d3.csv('out.csv', function (data) {
         // so any additional method chaining applies to the axis, not the chart.
         .yAxis().tickFormat(function (v) {
             return v + '%';
-        });
+        })
+        .tickValues([0,10,20,30,40,50,60]);
 
 // //CONS
 consChart
@@ -541,7 +541,7 @@ consChart
             return d.dd.getFullYear() + '/' + format((d.dd.getMonth() + 1));
         })
         // (_optional_) max number of records to be shown, `default = 25`
-        .size(10)
+        .size(100)
         // There are several ways to specify the columns; see the data-table documentation.
         // This code demonstrates generating the column header automatically based on the columns.
         .columns([
