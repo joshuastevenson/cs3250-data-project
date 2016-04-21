@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>speedrun users</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/dc.css"/>
+
+
+    <style>
+        #monthly-volume-chart g.y {
+            display: none;
+        }
+        #logo {
+            margin-right: 2em;
+            margin-top: 2em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="row"> <a href ="index.html">Home</a> | <a href ="users/index.html">User data</a>
+  | <a href ="projects/index.html">Other class projects</a></div>
+
+<h2>User</h2>
+
+
+<p>
+     Speedrunning is a global, growing activity. This page helps explore how
+     the comunity is growing.
+</p>
+
+
+
+<p>
+  Overall red is the second most popular username color on the site. This
+  corelates with the idea that competative people prefer red. Users joined also
+  has spikes around the times of the <a href="https://gamesdonequick.com/"> Games
+    done quick</a> events in January and Jully. This suggests that they help grow
+    the comunity.
+</p>
+
+
+<h2>World records from year</h2>
+
+
+<div class="row">
+    <div id="colorchart">
+        <strong>colors</strong>
+        <a class="reset" href="javascript:gainOrLossChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div id="quarter-chart">
+        <strong>Quarters</strong>
+        <a class="reset" href="javascript:quarterChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div class="clearfix"></div>
+    </div>
+
+    <div id="day-of-week-chart">
+        <strong>Day of Week</strong>
+        <a class="reset" href="javascript:dayOfWeekChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+
+<div class="row">
+  <strong>Number users joined in month</strong>
+    <div id="monthly-volume-chart">
+    </div>
+    <p class="muted pull-right" style="margin-right: 15px;">select a time range to zoom in</p>
+</div>
+
+<div class="row">
+    <div id="locchart">
+        <strong>Locations</strong>
+        <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+        <a class="reset" href="javascript:moveChart.filterAll();volumeChart.filterAll();dc.redrawAll();"
+           style="display: none;">reset</a>
+
+        <div class="clearfix"></div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <div>
+        <div class="dc-data-count">
+            <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
+                href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>
+        </div>
+    </div>
+    <table class="table table-hover dc-data-table">
+    </table>
+</div>
+
+<div class="clearfix"></div>
+
+
+</div>
+
+</div>
+
+<script type="text/javascript" src="../js/d3.js"></script>
+<script type="text/javascript" src="../js/crossfilter.js"></script>
+<script type="text/javascript" src="../js/dc.js"></script>
+<script type="text/javascript" src="../js/colorbrewer.js"></script>
+
+<script type="text/javascript" src="stock.js"></script>
+
+
+
+</body>
+</html>
