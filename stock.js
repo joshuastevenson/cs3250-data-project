@@ -19,6 +19,8 @@ var yearlyBubbleChart = dc.bubbleChart('#yearly-bubble-chart');
 var nasdaqCount = dc.dataCount('.dc-data-count');
 var nasdaqTable = dc.dataTable('.dc-data-table');
 
+var consChart = dc.rowChart('#conschart');
+
 //var platform
 
 // ### Anchor Div for Charts
@@ -188,7 +190,7 @@ d3.csv('out.csv', function (data) {
 
     // Create categorical dimension
     var gainOrLoss = ndx.dimension(function (d) {
-        return d.emulated//d.open > d.close ? 'Loss' : 'Gain';
+        return d.emulated ==1 ? "emulator" : "original"//d.open > d.close ? 'Loss' : 'Gain';
     });
     // Produce counts records in the dimension
     var gainOrLossGroup = gainOrLoss.group();
@@ -220,18 +222,12 @@ d3.csv('out.csv', function (data) {
     });
     var dayOfWeekGroup = dayOfWeek.group();
 
+     var cons = ndx.dimension(function (d) {return d.url});
+     var consGroup = cons.group();
     //### Define Chart Attributes
-    // Define chart attributes using fluent methods. See the
-    // [dc.js API Reference](https://github.com/dc-js/dc.js/blob/master/web/docs/api-latest.md) for more information
-    //
+
 
     //#### Bubble Chart
-
-    //Create a bubble chart and use the given css selector as anchor. You can also specify
-    //an optional chart group for this chart to be scoped within. When a chart belongs
-    //to a specific group then any interaction with the chart will only trigger redraws
-    //on charts within the same chart group.
-    // <br>API: [Bubble Chart](https://github.com/dc-js/dc.js/blob/master/web/docs/api-latest.md#bubble-chart)
 
     yearlyBubbleChart /* dc.bubbleChart('#yearly-bubble-chart', 'chartGroup') */
         // (_optional_) define chart width, `default = 200`
@@ -317,13 +313,29 @@ d3.csv('out.csv', function (data) {
             return v + '%';
         });
 
-    // #### Pie/Donut Charts
+// //CONS
+consChart
+    .width(1500)
+    .height(1700)
+    .margins({top: 20, left: 10, right: 10, bottom: 20})
+    .group(consGroup)
+    .dimension(cons)
+    // Assign colors to each value in the x scale domain
+    //.ordinalColors(['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb'])
+    .label(function (d) {
+        return  d.key;
+    })
+    // Title sets the row text
+    .title(function (d) {
+        return d.key + " " + d.value;
+    })
+    .elasticX(true)
+    .xAxis().ticks(4);
 
-    // Create a pie chart and use the given css selector as anchor. You can also specify
-    // an optional chart group for this chart to be scoped within. When a chart belongs
-    // to a specific group then any interaction with such chart will only trigger redraw
-    // on other charts within the same chart group.
-    // <br>API: [Pie Chart](https://github.com/dc-js/dc.js/blob/master/web/docs/api-latest.md#pie-chart)
+
+
+
+    // #### Pie/Donut Charts
 
     gainOrLossChart /* dc.pieChart('#gain-loss-chart', 'chartGroup') */
     // (_optional_) define chart width, `default = 200`
@@ -397,39 +409,6 @@ d3.csv('out.csv', function (data) {
 
     //#### Bar Chart
 
-    // Create a bar chart and use the given css selector as anchor. You can also specify
-    // an optional chart group for this chart to be scoped within. When a chart belongs
-    // to a specific group then any interaction with such chart will only trigger redraw
-    // on other charts within the same chart group.
-    // <br>API: [Bar Chart](https://github.com/dc-js/dc.js/blob/master/web/docs/api-latest.md#bar-chart)
-
-    // fluctuationChart /* dc.barChart('#volume-month-chart', 'chartGroup') */
-    //     .width(420)
-    //     .height(180)
-    //     .margins({top: 10, right: 50, bottom: 30, left: 40})
-    //     .dimension(fluctuation)
-    //     .group(fluctuationGroup)
-    //     .elasticY(true)
-    //     // (_optional_) whether bar should be center to its x value. Not needed for ordinal chart, `default=false`
-    //     .centerBar(true)
-    //     // (_optional_) set gap between bars manually in px, `default=2`
-    //     .gap(1)
-    //     // (_optional_) set filter brush rounding
-    //     .round(dc.round.floor)
-    //     .alwaysUseRounding(true)
-    //     .x(d3.scale.linear().domain([-25, 25]))
-    //     .renderHorizontalGridLines(true)
-    //     // Customize the filter displayed in the control span
-    //     .filterPrinter(function (filters) {
-    //         var filter = filters[0], s = '';
-    //         s += numberFormat(filter[0]) + '% -> ' + numberFormat(filter[1]) + '%';
-    //         return s;
-    //     });
-    //
-    // // Customize axes
-    // fluctuationChart.xAxis().tickFormat(
-    //     function (v) { return v + '%'; });
-    // fluctuationChart.yAxis().ticks(5);
 
     //#### Stacked Area Chart
 
