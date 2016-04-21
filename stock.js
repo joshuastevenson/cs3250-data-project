@@ -10,7 +10,7 @@
 // Note: It is often a good idea to have these objects accessible at the global scope so that they can be modified or
 // filtered by other page controls.
 var gainOrLossChart = dc.pieChart('#gain-loss-chart');
-var fluctuationChart = dc.barChart('#fluctuation-chart');
+//var fluctuationChart = dc.barChart('#fluctuation-chart');
 var quarterChart = dc.pieChart('#quarter-chart');
 var dayOfWeekChart = dc.rowChart('#day-of-week-chart');
 var moveChart = dc.lineChart('#monthly-move-chart');
@@ -18,6 +18,8 @@ var volumeChart = dc.barChart('#monthly-volume-chart');
 var yearlyBubbleChart = dc.bubbleChart('#yearly-bubble-chart');
 var nasdaqCount = dc.dataCount('.dc-data-count');
 var nasdaqTable = dc.dataTable('.dc-data-table');
+
+//var platform
 
 // ### Anchor Div for Charts
 /*
@@ -92,27 +94,43 @@ d3.csv('out.csv', function (data) {
         return d3.time.year(d.dd).getFullYear();
     });
     // Maintain running tallies by year as filters are applied or removed
+
+
     var yearlyPerformanceGroup = yearlyDimension.group().reduce(
         /* callback for when data is added to the current filter results */
         function (p, v) {
-            //++p.count;
+            ++p.count;
+            if (v.place == 1){
+              p.absGain ++; //#wr runs
+              p.sumIndex += v.primary_time /60; //time
+            }
             //p.absGain += v.close - v.open;
             //p.fluctuation += Math.abs(v.close - v.open);
             //p.sumIndex += (v.open + v.close) / 2;
-            //p.avgIndex = p.sumIndex / p.count;
+
+            p.avgIndex = p.sumIndex / p.count;
             //p.percentageGain = p.avgIndex ? (p.absGain / p.avgIndex) * 100 : 0;
+            p.percentageGain = p.count ? p.absGain / p.count *100 :0;
             //p.fluctuationPercentage = p.avgIndex ? (p.fluctuation / p.avgIndex) * 100 : 0;
+            p.fluctuationPercentage = p.avgIndex *5;
             return p;
         },
         /* callback for when data is removed from the current filter results */
         function (p, v) {
-            //--p.count;
+            --p.count;
+            if (v.place == 1){
+              p.absGain--;
+              p.sumIndex -= v.primary_time /60;
+            }
             //p.absGain -= v.close - v.open;
             //p.fluctuation -= Math.abs(v.close - v.open);
             //p.sumIndex -= (v.open + v.close) / 2;
-            //p.avgIndex = p.count ? p.sumIndex / p.count : 0;
+
+            p.avgIndex = p.count ? p.sumIndex / p.count : 0;
             //p.percentageGain = p.avgIndex ? (p.absGain / p.avgIndex) * 100 : 0;
+            p.percentageGain = p.count ? p.absGain / p.count *100 :0;
             //p.fluctuationPercentage = p.avgIndex ? (p.fluctuation / p.avgIndex) * 100 : 0;
+            p.fluctuationPercentage = p.avgIndex *10;
             return p;
         },
         /* initialize p */
@@ -121,7 +139,7 @@ d3.csv('out.csv', function (data) {
                 count: 0,
                 absGain: 0,
                 fluctuation: 0,
-                fluctuationPercentage: 0,
+                fluctuationPercentage: 20,
                 sumIndex: 0,
                 avgIndex: 0,
                 percentageGain: 0
@@ -146,17 +164,21 @@ d3.csv('out.csv', function (data) {
     var volumeByMonthGroup = moveMonths.group().reduceSum(function (d) {
         return d.place;//d.volume / 500000;
     });
+
+    //avg run time
     var indexAvgByMonthGroup = moveMonths.group().reduce(
         function (p, v) {
-            //++p.days;
+            ++p.days; //runs
             //p.total += (v.open + v.close) / 2;
-            //p.avg = Math.round(p.total / p.days);
+            p.total += v.primary_time / 60;
+            p.avg = Math.round(p.total / p.days);
             return p;
         },
         function (p, v) {
-            //--p.days;
+            --p.days;
             //p.total -= (v.open + v.close) / 2;
-            //p.avg = p.days ? Math.round(p.total / p.days) : 0;
+            p.total -= v.primary_time / 60;
+            p.avg = p.days ? Math.round(p.total / p.days) : 0;
             return p;
         },
         function () {
@@ -171,11 +193,7 @@ d3.csv('out.csv', function (data) {
     // Produce counts records in the dimension
     var gainOrLossGroup = gainOrLoss.group();
 
-    // Determine a histogram of percent changes
-    var fluctuation = ndx.dimension(function (d) {
-        return 10;//Math.round((d.close - d.open) / d.open * 100);
-    });
-    var fluctuationGroup = fluctuation.group();
+
 
     // Summarize volume by quarter
     var quarter = ndx.dimension(function (d) {
@@ -254,7 +272,7 @@ d3.csv('out.csv', function (data) {
         })
         .maxBubbleRelativeSize(0.3)
         .x(d3.scale.linear().domain([-2500, 2500]))
-        .y(d3.scale.linear().domain([-100, 100]))
+        .y(d3.scale.linear().domain([0, 100]))
         .r(d3.scale.linear().domain([0, 4000]))
         //##### Elastic Scaling
 
@@ -270,9 +288,9 @@ d3.csv('out.csv', function (data) {
         // (_optional_) render vertical grid lines, `default=false`
         .renderVerticalGridLines(true)
         // (_optional_) render an axis label below the x axis
-        .xAxisLabel('Index Gain')
+        .xAxisLabel('World Records')
         // (_optional_) render a vertical axis lable left of the y axis
-        .yAxisLabel('Index Gain %')
+        .yAxisLabel('% of Runs')
         //##### Labels and  Titles
 
         //Labels are displayed on the chart for each bubble. Titles displayed on mouseover.
@@ -286,8 +304,8 @@ d3.csv('out.csv', function (data) {
         .title(function (p) {
             return [
                 p.key,
-                'Index Gain: ' + numberFormat(p.value.absGain),
-                'Index Gain in Percentage: ' + numberFormat(p.value.percentageGain) + '%',
+                'records: ' + p.value.absGain,
+                'Percentage: ' + numberFormat(p.value.percentageGain) + '%',
                 'Fluctuation / Index Ratio: ' + numberFormat(p.value.fluctuationPercentage) + '%'
             ].join('\n');
         })
@@ -384,33 +402,34 @@ d3.csv('out.csv', function (data) {
     // to a specific group then any interaction with such chart will only trigger redraw
     // on other charts within the same chart group.
     // <br>API: [Bar Chart](https://github.com/dc-js/dc.js/blob/master/web/docs/api-latest.md#bar-chart)
-    fluctuationChart /* dc.barChart('#volume-month-chart', 'chartGroup') */
-        .width(420)
-        .height(180)
-        .margins({top: 10, right: 50, bottom: 30, left: 40})
-        .dimension(fluctuation)
-        .group(fluctuationGroup)
-        .elasticY(true)
-        // (_optional_) whether bar should be center to its x value. Not needed for ordinal chart, `default=false`
-        .centerBar(true)
-        // (_optional_) set gap between bars manually in px, `default=2`
-        .gap(1)
-        // (_optional_) set filter brush rounding
-        .round(dc.round.floor)
-        .alwaysUseRounding(true)
-        .x(d3.scale.linear().domain([-25, 25]))
-        .renderHorizontalGridLines(true)
-        // Customize the filter displayed in the control span
-        .filterPrinter(function (filters) {
-            var filter = filters[0], s = '';
-            s += numberFormat(filter[0]) + '% -> ' + numberFormat(filter[1]) + '%';
-            return s;
-        });
 
-    // Customize axes
-    fluctuationChart.xAxis().tickFormat(
-        function (v) { return v + '%'; });
-    fluctuationChart.yAxis().ticks(5);
+    // fluctuationChart /* dc.barChart('#volume-month-chart', 'chartGroup') */
+    //     .width(420)
+    //     .height(180)
+    //     .margins({top: 10, right: 50, bottom: 30, left: 40})
+    //     .dimension(fluctuation)
+    //     .group(fluctuationGroup)
+    //     .elasticY(true)
+    //     // (_optional_) whether bar should be center to its x value. Not needed for ordinal chart, `default=false`
+    //     .centerBar(true)
+    //     // (_optional_) set gap between bars manually in px, `default=2`
+    //     .gap(1)
+    //     // (_optional_) set filter brush rounding
+    //     .round(dc.round.floor)
+    //     .alwaysUseRounding(true)
+    //     .x(d3.scale.linear().domain([-25, 25]))
+    //     .renderHorizontalGridLines(true)
+    //     // Customize the filter displayed in the control span
+    //     .filterPrinter(function (filters) {
+    //         var filter = filters[0], s = '';
+    //         s += numberFormat(filter[0]) + '% -> ' + numberFormat(filter[1]) + '%';
+    //         return s;
+    //     });
+    //
+    // // Customize axes
+    // fluctuationChart.xAxis().tickFormat(
+    //     function (v) { return v + '%'; });
+    // fluctuationChart.yAxis().ticks(5);
 
     //#### Stacked Area Chart
 
@@ -427,7 +446,7 @@ d3.csv('out.csv', function (data) {
         .mouseZoomable(true)
     // Specify a "range chart" to link its brush extent with the zoom of the current "focus chart".
         .rangeChart(volumeChart)
-        .x(d3.time.scale().domain([new Date(1985, 0, 1), new Date(2012, 11, 31)]))
+        .x(d3.time.scale().domain([new Date(2010, 0, 1), new Date(2017, 11, 31)]))
         .round(d3.time.month.round)
         .xUnits(d3.time.months)
         .elasticY(true)
@@ -440,39 +459,46 @@ d3.csv('out.csv', function (data) {
         // Add the base layer of the stack with group. The second parameter specifies a series name for use in the
         // legend.
         // The `.valueAccessor` will be used for the base layer
-        .group(indexAvgByMonthGroup, 'Monthly Index Average')
+        .group(indexAvgByMonthGroup)
         .valueAccessor(function (d) {
             return d.value.avg;
         })
         // Stack additional layers with `.stack`. The first paramenter is a new group.
         // The second parameter is the series name. The third is a value accessor.
-        .stack(monthlyMoveGroup, 'Monthly Index Move', function (d) {
-            return d.value;
-        })
+
         // Title can be called by any stack layer.
         .title(function (d) {
             var value = d.value.avg ? d.value.avg : d.value;
             if (isNaN(value)) {
                 value = 0;
             }
-            return dateFormat(d.key) + '\n' + numberFormat(value);
+            return dateFormat(d.key) + '\naverage ' + numberFormat(value) +
+            '\ntotal ' + numberFormat(d.value.total) +
+            '\nruns ' + d.value.days;
         });
 
     //#### Range Chart
 
+
+    //month chart
+
     // Since this bar chart is specified as "range chart" for the area chart, its brush extent
     // will always match the zoom of the area chart.
     volumeChart.width(990) /* dc.barChart('#monthly-volume-chart', 'chartGroup'); */
-        .height(40)
+        .height(200)
         .margins({top: 0, right: 50, bottom: 20, left: 40})
         .dimension(moveMonths)
         .group(volumeByMonthGroup)
         .centerBar(true)
         .gap(1)
-        .x(d3.time.scale().domain([new Date(1985, 0, 1), new Date(2012, 11, 31)]))
+        .x(d3.time.scale().domain([new Date(2012, 0, 1), new Date(2017, 1, 1)]))
         .round(d3.time.month.round)
         .alwaysUseRounding(true)
-        .xUnits(d3.time.months);
+        .xUnits(d3.time.months)
+        //.mouseZoomable(true)
+        .title(function (d) {
+            return d.value;
+        });
 
     //#### Data Count
 
@@ -543,17 +569,36 @@ d3.csv('out.csv', function (data) {
             // Use the `d.date` field; capitalized automatically
             'date',
             // Use `d.open`, `d.close`
-            'open',
-            'close',
+            'place',
+            //'close',
             {
                 // Specify a custom format for column 'Change' by using a label with a function.
-                label: 'Change',
+                label: 'Time',
                 format: function (d) {
-                    return numberFormat(d.close - d.open);
+                  var totalSeconds = d.primary_time
+                  var hours = Math.floor(totalSeconds / 3600);
+                  totalSeconds %= 3600;
+                  var minutes = Math.floor(totalSeconds / 60);
+                  var seconds = totalSeconds % 60;
+                  var h = "";
+                  if (hours != 0){
+                    h = hours + ":";
+                  }
+                    return h+minutes+":"+seconds.toFixed(2);
                 }
             },
             // Use `d.volume`
-            'volume'
+            //'name'
+            {
+              label: 'Game',
+              format: function (d) { return d.name}
+              //}
+            },
+            'year',
+            {
+              label:"Console",
+              format:function(d){return d.url}
+            }
         ])
 
         // (_optional_) sort using the given field, `default = function(d){return d;}`

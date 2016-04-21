@@ -50,11 +50,11 @@
 </ul>
 -->
 
-<h2><s>Nasdaq 100 Index 1985/11/01-2012/06/29</s> # world records held in year</h2>
+<h2>World records from year</h2>
 
 <div class="row">
     <div id="yearly-bubble-chart" class="dc-chart">
-        <strong>Yearly Performance</strong> (radius: fluctuation/index ratio, color: gain/loss)
+        <!-- <strong>Yearly Performance</strong> (radius: fluctuation/index ratio, color: gain/loss) -->
         <a class="reset" href="javascript:yearlyBubbleChart.filterAll();dc.redrawAll();"
            style="display: none;">reset</a>
 
@@ -84,18 +84,12 @@
         <div class="clearfix"></div>
     </div>
 
-    <div id="fluctuation-chart">
-        <strong>Days by Fluctuation(%)</strong>
-        <span class="reset" style="display: none;">range: <span class="filter"></span></span>
-        <a class="reset" href="javascript:fluctuationChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
 
-        <div class="clearfix"></div>
-    </div>
 </div>
 
 <div class="row">
     <div id="monthly-move-chart">
-        <strong><s>Monthly Index Abs Move & Volume/500,000 Chart</s> # runs submitted</strong>
+        <strong>Average run length </strong>
         <span class="reset" style="display: none;">range: <span class="filter"></span></span>
         <a class="reset" href="javascript:moveChart.filterAll();volumeChart.filterAll();dc.redrawAll();"
            style="display: none;">reset</a>
@@ -105,6 +99,7 @@
 </div>
 
 <div class="row">
+  <strong>Number runs submitted in month</strong>
     <div id="monthly-volume-chart">
     </div>
     <p class="muted pull-right" style="margin-right: 15px;">select a time range to zoom in</p>
